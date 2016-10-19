@@ -17,24 +17,30 @@ csv.outAll = function (data, callback) {
 
 }
 
-var readFileLine = (path) => {
-    var inEnd = true;
+function readFileLine(path, callback) {
+    var isEnd = true;
     var index = 0;
 
-    var fReadStream = fs.createReadStream(path,{encoding:'utf8'});
+    var fReadStream = fs.createReadStream(path, {encoding: 'utf8'});
 
     var objReadline = readline.createInterface({
         input: fReadStream
     });
 
     fReadStream.on('end', function () {
-        console.log('end');
-        inEnd = true;
+        isEnd = true;
+        callback(index, {isEnd: isEnd, line: ""}, null);
     });
 
     objReadline.on('line', function (line) {
-        console.log(index++, line);
+        callback(index++, {isEnd: false, line: line}, null);
     });
 }
 
-readFileLine('test/demo2.csv');
+readFileLine('test/demo2.csv', function (index, data, err) {
+    if (!data.isEnd) {
+        console.log(index + " : " + data.line);
+    } else {
+        console.log("end");
+    }
+});
