@@ -44,3 +44,29 @@ readFileLine('test/demo2.csv', function (index, data, err) {
         console.log("end");
     }
 });
+
+function resolveLine(data) {
+
+}
+
+function findChunkHead(data) {
+    var findFunc = [findChunkHeadDQuote, findChunkHeadDQuote];
+
+}
+
+function findChunkHeadDQuote(data) {
+
+}
+
+function findChunkHeadNone(data) {
+
+}
+
+function decideChunkTail(data) {
+
+}
+
+function takeoutChunk(){
+
+}
+
