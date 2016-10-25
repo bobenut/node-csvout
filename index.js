@@ -37,7 +37,7 @@ function readFileLine(path, callback) {
     });
 }
 
-readFileLine('test/demo2-1.csv', function (index, data, err) {
+readFileLine('test/demo2-2.csv', function (index, data, err) {
     if (!data.isEnd) {
         console.log(index + " : " + data.line);
         resolveLine(data.line);
@@ -54,7 +54,7 @@ function resolveLine(data) {
 function findChunk(data) {
     var chunks = [];
     var findFuncs = [findChunkHeadDefautl, findChunkHeadDQuote];
-    while (data.length > 0) {
+    while (data && data.length > 0) {
         for (var i = 0, findFunc; findFunc = findFuncs[i++];) {
             var context = findFunc(data);
             if (!context) {
@@ -63,19 +63,18 @@ function findChunk(data) {
 
             context.tailFinder(data);
             var chunk = takeoutChunk(data, context);
-//            console.log('headIndex: ' + context.headIndex + ', headDataIndex:' + context.headDataIndex + ', tailIndex:' + context.tailIndex + ', tailDataIndex:' + context.tailDataIndex)
 
             data = cutChunk(data, context);
+
+            if(context.decoder){
+                data = context.decoder(data);
+            }
+
             chunks.push(chunk);
         }
     }
 
     console.log(chunks);
-}
-
-function findChunkHeadDQuote(data) {
-
-
 }
 
 function findChunkHeadDefautl(data) {
@@ -109,9 +108,62 @@ function findChunkTailDefault(data) {
         }
 
         this.tailIndex = index;
-        this.tailDataIndex = index;
+        this.tailDataIndex = index - 1;
         break;
     }
+}
+
+function findChunkHeadDQuote(data) {
+    var result = createDefaultFindContext();
+    var index = 0;
+
+    if (data[index] !== '"') {
+        return null;
+    }
+
+    result.headIndex = index;
+    result.headDataIndex = index + 1;
+    result.tailFinder = findChunkTailDQuote;
+    result.decoder = decodeDQuote;
+
+    return result;
+}
+
+function findChunkTailDQuote(data) {
+    var endCharStack = [];
+    var index = this.headDataIndex;
+
+    for (var c; c = data[index]; index++) {
+        if (c !== ',' &&
+            c !== '"') {
+
+            continue;
+        }
+
+        endCharStack.push(c);
+
+        if (endCharStack.length === 2) {
+            if (endCharStack[0] === '"' && endCharStack[1] === '"') {
+                endCharStack = [];
+                continue;
+            }
+            else if (endCharStack[0] === '"' && endCharStack[1] === ',') {
+                endCharStack = [];
+                this.tailIndex = index;
+                this.tailDataIndex = index - 2;
+                return;
+            }
+
+            endCharStack.shift();
+        }
+
+    }
+}
+
+
+function decodeDQuote(data) {
+    console.log('decode');
+    return data.replace(/\"/g,'h');
 }
 
 
@@ -124,7 +176,7 @@ function takeoutChunk(data, context) {
         return '';
     }
 
-    return data.substring(context.headDataIndex, context.tailDataIndex);
+    return data.substring(context.headDataIndex, context.tailDataIndex + 1);
 }
 
 function cutChunk(data, context) {
@@ -137,7 +189,8 @@ function createDefaultFindContext() {
         headDataIndex: -1,
         tailIndex: -1,
         tailDataIndex: -1,
-        tailFinder: null
+        tailFinder: null,
+        decoder: null
     };
 
 }
