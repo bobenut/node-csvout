@@ -67,7 +67,7 @@ function findChunk(data) {
             data = cutChunk(data, context);
 
             if(context.decoder){
-                data = context.decoder(data);
+                chunk = context.decoder(chunk);
             }
 
             chunks.push(chunk);
@@ -162,8 +162,7 @@ function findChunkTailDQuote(data) {
 
 
 function decodeDQuote(data) {
-    console.log('decode');
-    return data.replace(/\"/g,'h');
+    return data.replace(/\"{2}/g,'');
 }
 
 
