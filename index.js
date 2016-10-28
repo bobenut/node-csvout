@@ -1,20 +1,35 @@
 "use strict"
 var fs = require('fs');
 var readline = require('readline');
+var EventEmitter = require('events');
 
 var csv = {};
 module.exports = csv;
 
-csv.out = function (data) {
+csv.outline = function (path, options) {
+    var event = new EventEmitter();
+    readFileLine(path, function (index, data, err) {
+        if (!data.isEnd) {
+            event.emit('data', index, handleWithOptioins(resolveLine(data.line), options));
+        } else {
+            event.emit('end');
+        }
+    });
 
+    return event;
 };
 
-csv.outEachLine = function (data, callback) {
-
-};
-
-csv.outAll = function (data, callback) {
-
+csv.outAll = function (path, callback, options) {
+    var datas = [];
+    readFileLine(path, function (index, data, err) {
+        if (!data.isEnd) {
+            datas.push(handleWithOptioins(resolveLine(data.line), options));
+        } else {
+            if (callback) {
+                callback(null, datas);
+            }
+        }
+    });
 }
 
 function readFileLine(path, callback) {
@@ -37,21 +52,7 @@ function readFileLine(path, callback) {
     });
 }
 
-readFileLine('test/demo2-2.csv', function (index, data, err) {
-    if (!data.isEnd) {
-        console.log(index + " : " + data.line);
-        resolveLine(data.line);
-        console.log('');
-    } else {
-        console.log("end");
-    }
-});
-
 function resolveLine(data) {
-    findChunk(data);
-}
-
-function findChunk(data) {
     var chunks = [];
     var findFuncs = [findChunkHeadDefautl, findChunkHeadDQuote];
     while (data && data.length > 0) {
@@ -66,7 +67,7 @@ function findChunk(data) {
 
             data = cutChunk(data, context);
 
-            if(context.decoder){
+            if (context.decoder) {
                 chunk = context.decoder(chunk);
             }
 
@@ -74,7 +75,7 @@ function findChunk(data) {
         }
     }
 
-    console.log(chunks);
+    return chunks;
 }
 
 function findChunkHeadDefautl(data) {
@@ -160,9 +161,8 @@ function findChunkTailDQuote(data) {
     }
 }
 
-
 function decodeDQuote(data) {
-    return data.replace(/\"{2}/g,'');
+    return data.replace(/\"{2}/g, '"');
 }
 
 
@@ -191,5 +191,31 @@ function createDefaultFindContext() {
         tailFinder: null,
         decoder: null
     };
+}
 
+function handleWithOptioins(data, options) {
+    if (!options) {
+        return data;
+    }
+
+    var handlers = [cutData];
+    for (var i = 0, h; h = handlers[i++];) {
+        data = h(data, options);
+    }
+
+    return data;
+}
+
+function cutData(data, options) {
+    if (!options.col) {
+        return data;
+    }
+
+    if (options.col >= data.length) {
+        return data;
+    }
+
+    data.splice(options.col, data.length - options.col);
+
+    return data;
 }
