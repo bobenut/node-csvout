@@ -19,14 +19,14 @@ csv.outline = function (path, options) {
     return event;
 };
 
-csv.outAll = function (path, callback, options) {
+csv.outAll = function (path, options, callback) {
     var datas = [];
     readFileLine(path, function (index, data, err) {
         if (!data.isEnd) {
             datas.push(handleWithOptioins(resolveLine(data.line), options));
         } else {
             if (callback) {
-                callback(null, datas);
+                callback(null, datas, err);
             }
         }
     });
@@ -70,7 +70,7 @@ function resolveLine(data) {
             if (context.decoder) {
                 chunk = context.decoder(chunk);
             }
-
+//            console.log('data=' + data + ', chunk=' + chunk);
             chunks.push(chunk);
         }
     }
@@ -104,12 +104,19 @@ function findChunkTailDefault(data) {
     }
 
     for (var c; c = data[index]; index++) {
-        if (c !== ',') {
+        if (c !== ',' &&
+            index < data.length - 1) {
             continue;
         }
 
-        this.tailIndex = index;
-        this.tailDataIndex = index - 1;
+        if (index === data.length - 1) {
+            this.tailIndex = index;
+            this.tailDataIndex = index;
+        } else {
+            this.tailIndex = index;
+            this.tailDataIndex = index - 1;
+        }
+
         break;
     }
 }
@@ -136,9 +143,16 @@ function findChunkTailDQuote(data) {
 
     for (var c; c = data[index]; index++) {
         if (c !== ',' &&
-            c !== '"') {
+            c !== '"' &&
+            index < data.length - 1) {
 
             continue;
+        }
+
+        if (index === data.length - 1) {
+            this.tailIndex = index;
+            this.tailDataIndex = index-1;
+            break;
         }
 
         endCharStack.push(c);
@@ -179,7 +193,7 @@ function takeoutChunk(data, context) {
 }
 
 function cutChunk(data, context) {
-    return data.substring(context.tailIndex + 1, data.length - 1);
+    return data.substring(context.tailIndex + 1, data.length);
 }
 
 function createDefaultFindContext() {
