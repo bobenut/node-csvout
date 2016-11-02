@@ -13,7 +13,7 @@ csv.on('end', function () {
 });
 
 /*read all data from csv file.data is dimensional array*/
-outcsv.outAll('../test/test-data-01.csv', {col: 8}, function (index, datas, err) {
+outcsv.outAll('../test/test-data-01.csv', null, function (index, datas, err) {
     console.log('\nread all start');
     console.log(datas);
     console.log('read all end');
