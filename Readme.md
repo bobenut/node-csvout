@@ -27,6 +27,7 @@ npm install csvout
 ###csvout.outline(path, options)
 * path: file path
 * options: limit to col that will read. default to read all<br />
+
 Read each line.
 In example/demo.js
 ```
