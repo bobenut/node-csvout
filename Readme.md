@@ -26,9 +26,9 @@ npm install csvout
 ##API
 ###csvout.outline(path, options)
 * path: file path
-* options: limit to col that will read. default to read all
-  Read each line.
-  In example/demo.js
+* options: limit to col that will read. default to read all<br />
+Read each line.
+In example/demo.js
 ```
 var csv = csvout.outline('../test/test-data-01.csv', {col: 8});
 console.log('read eachline start');
@@ -43,9 +43,10 @@ csv.on('end', function () {
 
 ###csvout.outAll(path, options, callback)
 * path: file path
-* options: limit to col that will read. default to read all
-  Read all line.
-  In example/demo.js
+* options: limit to col that will read. default to read all<br />
+
+Read all line.
+In example/demo.js
 ```
 csvout.outAll('../test/test-data-01.csv', null, function (index, datas, err) {
     console.log('\nread all start');
