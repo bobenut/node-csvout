@@ -18,7 +18,7 @@ describe('01.Tsake out unformat data', function () {
     });
 
     it('01-01.Take out datas in each line', function (done) {
-        var csv = outcsv.outline('test/test-data-01.csv', {col: 8});
+        var csv = outcsv.outLine('test/test-data-01.csv', {col: 8});
         csv.on('data', function (index, data, err) {
             var baseData;
             if (!testData01[index]) {
@@ -60,7 +60,7 @@ describe('02.Tsake out format data that is wrapped with double quote', function 
     });
 
     it('02-01.Take out datas in each line ', function (done) {
-        var csv = outcsv.outline('test/test-data-02.csv', {col: 5});
+        var csv = outcsv.outLine('test/test-data-02.csv', {col: 5});
         csv.on('data', function (index, data, err) {
             var baseData;
             if (!testData01[index]) {

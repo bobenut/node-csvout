@@ -6,7 +6,7 @@ var EventEmitter = require('events');
 var csv = {};
 module.exports = csv;
 
-csv.outline = function (path, options) {
+csv.outLine = function (path, options) {
     var event = new EventEmitter();
     readFileLine(path, function (index, data, err) {
         if (!data.isEnd) {
