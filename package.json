@@ -1,6 +1,6 @@
 {
   "name": "csvout",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A node.js module for parsing csv to json.",
   "main": "index.js",
   "scripts": {
