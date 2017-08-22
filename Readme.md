@@ -1,14 +1,14 @@
-#csvout
+# csvout
 
 
 
-##Purpose
+## Purpose
 A node.js module fro parsing csv file data.
 you can use this module when need to read csv file content. this module that it read each line from csv file and then to parse into javascript array.it can make you easier to use csv data.
 
 
 
-##Installation
+## Installation
 
 Via npm.
 ```
@@ -17,14 +17,14 @@ npm install csvout
 
 
 
-##Table of apis
+## Table of apis
 * csvout.outline(path, options)
 * csvout.outAll(path, options, callback)
 
 
 
-##API
-###csvout.outline(path, options)
+## API
+### csvout.outline(path, options)
 * path: file path
 * options: limit to col that will read. default to read all<br />
 
@@ -42,7 +42,7 @@ csv.on('end', function () {
 });
 ```
 
-###csvout.outAll(path, options, callback)
+### csvout.outAll(path, options, callback)
 * path: file path
 * options: limit to col that will read. default to read all<br />
 
