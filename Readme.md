@@ -59,4 +59,4 @@ csvout.outAll('../test/test-data-01.csv', null, function (index, datas, err) {
 
 
 ## License
-csvout  is licensed under the GNU.
+csvout  is licensed under the MIT.
